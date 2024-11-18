@@ -9,7 +9,7 @@ const BASIC_CREDENTIALS = process.env.BASIC_CREDENTIALS! || '[]'
 const PROTECTED_ROUTES = process.env.PROTECTED_ROUTES! || '[]'
 const IGNORED_LABELS = process.env.IGNORED_LABELS! || '[]'
 const MESSENGER_API_URL = process.env.MESSENGER_API_URL!
-const MESSENGER_API_KEY = process.env.MESSENGER_API_KEY!
+const MESSENGER_API_TOKEN = process.env.MESSENGER_API_TOKEN!
 
 const protectedRoutes = JSON.parse(PROTECTED_ROUTES)
 const basicCredentials = JSON.parse(BASIC_CREDENTIALS)
@@ -17,14 +17,14 @@ const ignoredLabels = JSON.parse(IGNORED_LABELS)
 
 const sendMessage = async (messageData: {
   to: string
-  type: string
-  msg: string
+  body: string
+  text: string
 }) => {
   try {
     const response = await axios.post(MESSENGER_API_URL, messageData, {
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Key': MESSENGER_API_KEY,
+        Authorization: `Bearer ${MESSENGER_API_TOKEN}`,
       },
     })
     console.log('Response:', response.data)
@@ -79,8 +79,8 @@ const alertRoute = async (fastify: FastifyInstance) => {
     }
     const messageData = {
       to: id,
-      type: 'text',
-      msg: titleMessage.join('') + '\n' + bodyMessage.join('\n'),
+      body: 'text',
+      text: titleMessage.join('') + '\n' + bodyMessage.join('\n'),
     }
     sendMessage(messageData)
     reply.send('OK')
